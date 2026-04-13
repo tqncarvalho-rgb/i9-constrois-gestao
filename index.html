@@ -512,9 +512,9 @@ select option{background:var(--surface2)}
 </div></div>
 
 <script>
-// ══════════════════════════════════════════════════════════
-// i9 GESTÃO DE OBRA v2.0  —  Limpo e funcional
-// ══════════════════════════════════════════════════════════
+// ---
+// i9 GEST O DE OBRA v2.0 Limpo e funcional
+// ---
 const SAVE_KEY = 'gi9_v2';
 const $ = id => document.getElementById(id);
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -523,7 +523,7 @@ const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replac
 const fmtE = v => (+v||0).toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
 const fmtD = s => s ? s.split('-').reverse().join('/') : '—';
 
-// ── STATE ────────────────────────────────────────────────
+// STATE
 let obras=[], trabalhadores=[], pontosHora={}, orcamentos={}, diarios=[], encomendas=[], pagamentos=[], oops=[], subcontratacoes=[];
 let _oid=null, _editObra=null, _editTrab=null, _editDiario=null, _editEnc=null, _eItens=[];
 let _ganttObraId=null, _ganttCap=null, _ganttTab='gantt';
@@ -532,7 +532,7 @@ var logoSrc='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhoAAAD+CAYAAAB886ybA
 let _matObraId=null, _matCat=null, _matItem=null, _matPath=[];
 function ganttDrillCap(ci){renderGantt(_ganttObraId,'cap_'+ci);}
 
-// ── CLASSIFICAÇÃO CONSTRUTIVA ─────────────────────────────
+// CLASSIFICA O CONSTRUTIVA
 function tipoCapitulo(nome){
   const n=(nome||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
   if(/ESTALEI|COORDENA/.test(n))return 'preparacao';
@@ -572,8 +572,8 @@ const _TIPO_ORDER={
   geral:          {order:5, startF:0.28, overlapSubs:0.10},
 };
 
-// ── SAVE / LOAD ──────────────────────────────────────────
-// ── SUPABASE CONFIG ──────────────────────────────────────
+// SAVE / LOAD
+// SUPABASE CONFIG
 var _SB_URL='https://fujltxmoshvhrlkzpkwp.supabase.co';
 var _SB_KEY='sb_publishable_OZG8sDTYa8sbVSEBAYB0Eg_RaJeZqZb';
 var _saveTimer=null;
@@ -634,7 +634,7 @@ function loadData(){
     headers:_sbHeaders()
   }).then(function(r){return r.json();}).then(function(rows){
     if(!rows||!rows.length||!rows[0].dados){
-      // Supabase vazio — enviar dados locais
+      // Supabase vazio enviar dados locais
       saveData();
       $('sdot').className='sync-dot ok';$('slabel').textContent='☁ Sincronizado';
       return;
@@ -643,7 +643,7 @@ function loadData(){
     // Comparar datas: usar o mais recente
     var localRaw=localStorage.getItem(SAVE_KEY);
     var localDate=localRaw?JSON.parse(localRaw)._saved||0:0;
-    // Usar dados remotos (mais fiáveis)
+    // Usar dados remotos (mais fi veis)
     obras=remote.obras||obras;
     trabalhadores=remote.trabalhadores||trabalhadores;
     pontosHora=remote.pontosHora||pontosHora;
@@ -667,7 +667,7 @@ function loadData(){
   });
 }
 
-// ── NAV ───────────────────────────────────────────────────
+// NAV
 function navTo(pageId){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
@@ -680,14 +680,14 @@ document.querySelectorAll('.nav-item').forEach(function(btn){
   btn.addEventListener('click',function(){navTo(btn.dataset.page);});
 });
 
-// ── MODAIS ────────────────────────────────────────────────
+// MODAIS
 function openM(id){$(id).classList.add('open');}
 function closeM(id){$(id).classList.remove('open');}
 document.querySelectorAll('.overlay').forEach(function(o){
   o.addEventListener('click',function(e){if(e.target===o)o.classList.remove('open');});
 });
 
-// ── HELPERS ───────────────────────────────────────────────
+// HELPERS
 function estadoInfo(e){
   const m={orcamentacao:{l:'Orçamentação',c:'b-amber'},adjudicada:{l:'Adjudicada',c:'b-blue'},andamento:{l:'Em Execução',c:'b-green'},concluida:{l:'Concluída',c:'b-gray'},suspensa:{l:'Suspensa',c:'b-red'}};
   return m[e]||{l:e||'—',c:'b-gray'};
@@ -696,10 +696,10 @@ function getSegunda(){
   const d=new Date();d.setHours(0,0,0,0);const dow=d.getDay();d.setDate(d.getDate()-(dow===0?6:dow-1));return d.toISOString().slice(0,10);
 }
 
-// ── DASHBOARD ────────────────────────────────────────────
+// DASHBOARD
 function calcAlertas(){
-  // Para cada obra activa com orçamento e fases, verificar que materiais precisam ser encomendados
-  // Antecedência: 2 semanas por defeito
+  // Para cada obra activa com or amento e fases, verificar que materiais precisam ser encomendados
+  // Anteced ncia: 2 semanas por defeito
   const ANTECED_SEMS=2;
   const alertas=[];
 
@@ -710,7 +710,7 @@ function calcAlertas(){
     const hoje=new Date();
     const semanaAtual=Math.max(0,(hoje-dataInicio)/(7*864e5));
 
-    // Para cada fase do Gantt, verificar se está a 2 semanas de começar
+    // Para cada fase do Gantt, verificar se est a 2 semanas de come ar
     orc.fases.forEach(function(fase){
       const startSem=fase.startSem||0;
       const semsAteInicio=startSem-semanaAtual;
@@ -718,7 +718,7 @@ function calcAlertas(){
 
       const urgencia=semsAteInicio<=0?'urgente':semsAteInicio<=ANTECED_SEMS?'alerta':'aviso';
 
-      // Encontrar materiais desta fase que ainda não foram encomendados
+      // Encontrar materiais desta fase que ainda n o foram encomendados
       const me=orc._matEdits||{};
       const catNome=fase.capNome||fase.nome;
       const cat=orc.categorias.find(function(c){return c.nome===catNome;});
@@ -787,7 +787,7 @@ function renderObraCard(o){
     +'</div></div>';
 }
 
-// ── OBRAS LIST ───────────────────────────────────────────
+// OBRAS LIST
 function renderObras(){
   const tb=$('obras-tb');
   if(!obras.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Sem obras. Clica "+ Nova Obra".</td></tr>';return;}
@@ -805,7 +805,7 @@ function renderObras(){
   }).join('');
 }
 
-// ── OBRA CRUD ────────────────────────────────────────────
+// OBRA CRUD
 function novaObra(){
   _editObra=null; $('m-obra-t').textContent='Nova Obra'; $('o-btn').textContent='Guardar';
   ['o-nome','o-cliente','o-local','o-notas'].forEach(function(id){var el=$(id);if(el)el.value='';});
@@ -835,7 +835,7 @@ function delObra(id){
   saveData();renderObras();renderDash();
 }
 
-// ── OBRA DETAIL ──────────────────────────────────────────
+// OBRA DETAIL
 function abrirObra(id,tabInicial){
   _oid=id;const o=obras.find(function(x){return x.id===id;});if(!o)return;
   $('d-nome').textContent=o.nome;
@@ -856,7 +856,7 @@ function switchTab(tabId){
   if(fn[tabId]) fn[tabId](_oid);
 }
 
-// ── TAB RESUMO ───────────────────────────────────────────
+// TAB RESUMO
 function renderResumo(obraId){
   const o=obras.find(function(x){return x.id===obraId;});const orc=orcamentos[obraId];
   const nD=diarios.filter(function(d){return d.obraId===obraId;}).length;
@@ -878,7 +878,7 @@ function renderResumo(obraId){
     +'</div>';
 }
 
-// ── TAB ORÇAMENTO ────────────────────────────────────────
+// TAB OR AMENTO
 function renderOrc(obraId){
   const orc=orcamentos[obraId];const el=$('tab-orcamento');
   if(!orc){
@@ -1046,7 +1046,7 @@ function saveOrcExec(obraId,num,pct){
   if(!orc)return;
   if(!orc._exec)orc._exec={};
   orc._exec[num]=Math.min(100,Math.max(0,+pct||0));
-  // Actualizar progresso da obra com base no valor executado do orçamento
+  // Actualizar progresso da obra com base no valor executado do or amento
   var total=orc.total||0;
   if(total>0){
     var exec=orc._exec;
@@ -1069,7 +1069,7 @@ function saveOrcExec(obraId,num,pct){
   renderOrc(obraId);
 }
 
-// Delegação de eventos para inputs de execução do orçamento
+// Delega o de eventos para inputs de execu o do or amento
 document.addEventListener('change',function(e){
   var inp=e.target;
   if(!inp.classList||!inp.classList.contains('orc-exec-inp'))return;
@@ -1078,7 +1078,7 @@ document.addEventListener('change',function(e){
   if(obra&&num)saveOrcExec(obra,num,+inp.value);
 });
 function renderOrcFlat(cats,total,obraId){
-  // Fallback para orçamentos antigos sem hierarquia
+  // Fallback para or amentos antigos sem hierarquia
   var html='';
   cats.forEach(function(cat,ci){
     var pct=total?(cat.total/total*100).toFixed(1):0;
@@ -1105,7 +1105,7 @@ function orcToggle(bid){
   if(ic)ic.style.transform=open?'rotate(90deg)':'rotate(0deg)';
 }
 
-// ── IMPORTAR EXCEL ────────────────────────────────────────
+// IMPORTAR EXCEL
 function importOrc(obraId,input){
   const file=input.files[0];if(!file)return;
   const r=new FileReader();
@@ -1162,7 +1162,7 @@ function parseOrcRows(rows,_totalSems){
     if(isSkip.test(num)){if(c5>0&&!totalOficial)totalOficial=Math.round(c5*100)/100;return;}
     if(isSkip.test(desc))return;
 
-    // PARTE X → nova secção principal (REDES DE ÁGUAS, REDES DE ESGOTOS, etc.)
+    // PARTE X nova sec o principal (REDES DE GUAS, REDES DE ESGOTOS, etc.)
     if(num.toUpperCase().startsWith('PARTE')&&desc){
       secAtual={id:uid(),nome:desc.substring(0,200),num:num,total:0,capitulos:[],_fromTitle:true};
       secoes.push(secAtual);
@@ -1170,7 +1170,7 @@ function parseOrcRows(rows,_totalSems){
       return;
     }
 
-    // TITLE: linha sem número com texto maiúsculo = nova secção principal
+    // TITLE: linha sem n mero com texto mai sculo = nova sec o principal
     if(!num&&isSectionTitle(num,desc)){
       secAtual={id:uid(),nome:desc,num:'',total:0,capitulos:[],_fromTitle:true};
       secoes.push(secAtual);
@@ -1180,9 +1180,9 @@ function parseOrcRows(rows,_totalSems){
 
     if(!numClean&&!desc)return; // linha vazia
 
-    // Linhas sem número hierárquico mas com descrição (ex: "Faz parte integrante...")
+    // Linhas sem n mero hier rquico mas com descri o (ex: "Faz parte integrante...")
     if(!numClean&&desc){
-      // Pode ser uma linha descritiva sem valor → adicionar ao artigo actual como nota
+      // Pode ser uma linha descritiva sem valor adicionar ao artigo actual como nota
       if(c5>0){
         // Tem valor: adicionar como item avulso
         const dest=artAtual||subAtual;
@@ -1203,17 +1203,17 @@ function parseOrcRows(rows,_totalSems){
     const valor=c5!==0?Math.round(c5*100)/100:(c3>0&&c4>0?Math.round(c3*c4*100)/100:0);
 
     if(niveis===1){
-      // Capítulo principal (1, 2, 3...)
-      // Se secção actual foi criada por TITLE/PARTE → L1 é capítulo dentro dela
-      // Caso contrário (sem secção, ou secção criada por outro L1) → L1 é nova secção
+      // Cap tulo principal (1, 2, 3...)
+      // Se sec o actual foi criada por TITLE/PARTE L1 cap tulo dentro dela
+      // Caso contr rio (sem sec o, ou sec o criada por outro L1) L1 nova sec o
       if(secAtual&&secAtual._fromTitle){
-        // L1 é capítulo dentro da secção TITLE/PARTE actual
+        // L1 cap tulo dentro da sec o TITLE/PARTE actual
         capAtual={id:uid(),nome:desc.substring(0,200),num:numClean,total:0,subcaps:[]};
         secAtual.capitulos=secAtual.capitulos||[];
         secAtual.capitulos.push(capAtual);
         subAtual=null;artAtual=null;
       } else {
-        // L1 cria nova secção de topo (sem secção anterior, ou após outro L1)
+        // L1 cria nova sec o de topo (sem sec o anterior, ou ap s outro L1)
         secAtual={id:uid(),nome:desc.substring(0,200),num:numClean,total:0,capitulos:[],subcaps:[],_fromL1:true};
         secoes.push(secAtual);
         capAtual=null;subAtual=null;artAtual=null;
@@ -1222,9 +1222,9 @@ function parseOrcRows(rows,_totalSems){
     }
 
     if(niveis===2){
-      // Subcapítulo (1.1, 1.2...)
+      // Subcap tulo (1.1, 1.2...)
       if(secAtual&&secAtual._fromL1&&!capAtual){
-        // Formato L1-como-secção: L2 vai directamente como subcap da secção
+        // Formato L1-como-sec o: L2 vai directamente como subcap da sec o
         subAtual={id:uid(),nome:desc.substring(0,200),num:numClean,total:0,artigos:[]};
         secAtual.subcaps=secAtual.subcaps||[];
         secAtual.subcaps.push(subAtual);
@@ -1240,7 +1240,7 @@ function parseOrcRows(rows,_totalSems){
     }
 
     if(niveis===3&&!unid&&valor===0){
-      // Artigo descritivo (1.1.1 sem unidade/valor) → descrição do grupo de sub-itens
+      // Artigo descritivo (1.1.1 sem unidade/valor) descri o do grupo de sub-itens
       if(!subAtual){subAtual={id:uid(),nome:'GERAL',num:'',total:0,artigos:[]};if(!capAtual){capAtual={id:uid(),nome:'GERAL',num:'',total:0,subcaps:[]};if(!secAtual){secAtual={id:uid(),nome:'GERAL',num:'',total:0,capitulos:[]};secoes.push(secAtual);}secAtual.capitulos.push(capAtual);}capAtual.subcaps=capAtual.subcaps||[];capAtual.subcaps.push(subAtual);}
       artAtual={id:uid(),nome:desc.substring(0,500),num:numClean,total:0,itens:[]};
       subAtual.artigos=subAtual.artigos||[];
@@ -1251,11 +1251,11 @@ function parseOrcRows(rows,_totalSems){
     // Artigo com valor (L3 com valor, L4, L5)
     if(valor===0&&!unid)return; // sem valor e sem unidade → ignorar
 
-    // Se L3 com valor mas sem subAtual (ex: 2.1.1 directamente após L1 sem L2)
-    // criar subcapítulo implícito para agrupar
+    // Se L3 com valor mas sem subAtual (ex: 2.1.1 directamente ap s L1 sem L2)
+    // criar subcap tulo impl cito para agrupar
     if(niveis===3&&!subAtual){
       if(!capAtual){capAtual={id:uid(),nome:'GERAL',num:'',total:0,subcaps:[]};if(!secAtual){secAtual={id:uid(),nome:'GERAL',num:'',total:0,capitulos:[]};secoes.push(secAtual);}secAtual.capitulos.push(capAtual);}
-      // Usar prefixo L2 do número como nome do subcap implícito
+      // Usar prefixo L2 do n mero como nome do subcap impl cito
       var prefL2=numClean.split('.').slice(0,2).join('.');
       subAtual={id:uid(),nome:capAtual.nome,num:prefL2,total:0,artigos:[]};
       capAtual.subcaps=capAtual.subcaps||[];
@@ -1296,7 +1296,7 @@ function parseOrcRows(rows,_totalSems){
   const cats=[];
 
   secoes.forEach(function(sec){
-    // Cada secção vira uma "categoria" com todos os itens flat
+    // Cada sec o vira uma "categoria" com todos os itens flat
     const allItens=[];
     function collectItens(obj,prefix){
       if(obj.nome&&prefix){
@@ -1308,11 +1308,11 @@ function parseOrcRows(rows,_totalSems){
       (obj.capitulos||[]).forEach(function(c){collectItens(c,true);});
     }
     (sec.capitulos||[]).forEach(function(c){collectItens(c,true);});
-    // Formato L1-como-secção: subcaps directamente na secção (sem capitulos intermédios)
+    // Formato L1-como-sec o: subcaps directamente na sec o (sem capitulos interm dios)
     (sec.subcaps||[]).forEach(function(s){collectItens(s,true);});
     if(sec.itens&&sec.itens.length)sec.itens.forEach(function(it){allItens.push(it);});
 
-    // _secoes: hierarquia para render — usar capitulos se existirem, senão subcaps directos
+    // _secoes: hierarquia para render usar capitulos se existirem, sen o subcaps directos
     var hierarquia=sec.capitulos&&sec.capitulos.length?sec.capitulos:(sec.subcaps||[]);
 
     const pct=Math.round(sec.total/gt*100);
@@ -1332,7 +1332,7 @@ function parseOrcRows(rows,_totalSems){
     const capDur=Math.max(2,Math.round(capPct/100*_sems));
     const capStart=Math.round(tInfo.startF*_sems);
     const overlapSubs=tInfo.overlapSubs||0.10;
-    // Subcaps com valor como fases — procurar recursivamente
+    // Subcaps com valor como fases procurar recursivamente
     const subsValidos=[];
     function collectSubs(obj,parentNome){
       var nm=obj.nome||parentNome;
@@ -1340,7 +1340,7 @@ function parseOrcRows(rows,_totalSems){
         subsValidos.push({nome:nm,total:obj.total,num:obj.num||''});
         return; // não descer mais se o nível já tem total
       }
-      // Descer para subcaps e artigos se este nível não tem total directo
+      // Descer para subcaps e artigos se este n vel n o tem total directo
       (obj.subcaps||[]).forEach(function(s){collectSubs(s,nm);});
       (obj.artigos||[]).forEach(function(a){if(a.total>0)subsValidos.push({nome:a.nome,total:a.total,num:a.num||''});});
     }
@@ -1365,7 +1365,7 @@ function parseOrcRows(rows,_totalSems){
   return {cats:cats,fases:fasesArr,totalOficial:totalOficial,_sems:_sems,_secoes:secoes};
 }
 
-// ── TAB PLANEAMENTO ───────────────────────────────────────
+// TAB PLANEAMENTO
 function gerarFasesDeCategoria(orc,_sems){
   const gt=Math.max(orc.total,1);
   const cats=(orc.categorias||[]).filter(function(c){return c.total>0;});
@@ -1378,7 +1378,7 @@ function gerarFasesDeCategoria(orc,_sems){
     const capDur=Math.max(2,Math.round(capPct/100*_sems));
     const capStart=Math.round(tInfo.startF*_sems);
     const overlapSubs=tInfo.overlapSubs||0.10;
-    // Extrair subcapítulos dos markers isSub
+    // Extrair subcap tulos dos markers isSub
     const subcaps=[];let subAtual=null;
     (cat.itens||[]).forEach(function(it){
       if(it.isSub){const nm=it.desc.replace(/^-+\s*/,'').replace(/\s*-+$/,'').trim();subAtual={nome:nm||cat.nome,total:0,itens:[]};subcaps.push(subAtual);}
@@ -1413,7 +1413,7 @@ function renderGantt(obraId,expandCap){
 
   if(orc&&(!orc.fases||!orc.fases.length)&&orc.categorias&&orc.categorias.length){orc.fases=gerarFasesDeCategoria(orc,sems);orc._fasesBase=orc.fases.map(function(f){return {id:f.id,capNome:f.capNome,nome:f.nome,startSem:f.startSem,durSems:f.durSems};});saveData();}
   const fases=orc&&orc.fases&&orc.fases.length?orc.fases:(obra&&obra.fases?obra.fases:[]);
-  // Index of base plan for deviation display — keyed by id for uniqueness
+  // Index of base plan for deviation display keyed by id for uniqueness
   var _baseIdx={};  // by id
   var _baseCapIdx={}; // min startSem per capNome (for cap-level display)
   ((orc&&orc._fasesBase)||[]).forEach(function(f){
@@ -1432,7 +1432,7 @@ function renderGantt(obraId,expandCap){
     return;
   }
 
-  // Agrupar por capítulo
+  // Agrupar por cap tulo
   const capKeys=[];const capMap={};
   fases.forEach(function(f){
     const k=f.capNome||f.nome;
@@ -1522,7 +1522,7 @@ function renderGantt(obraId,expandCap){
   const duracaoLabel=(orc&&orc.duracaoMeses)||(obra&&obra.duracaoMeses)||Math.round(sems/4.33);
   var capKeyExpanded=_ganttCap?capKeys[parseInt(_ganttCap.replace('cap_',''))||0]:'';
 
-  // Build all 3 tabs at once — switch with CSS only, never re-render
+  // Build all 3 tabs at once switch with CSS only, never re-render
   var _tg=_ganttTab||'gantt';
 
   // Toolbar
@@ -1556,7 +1556,7 @@ function renderGantt(obraId,expandCap){
     +'<div id="gpanel-atrasos" style="display:'+(_tg==='atrasos'?'block':'none')+'">'+_at+'</div>'
     +'</div>';
 
-  // Tab buttons — only show/hide, NEVER re-render
+  // Tab buttons only show/hide, NEVER re-render
   ['gantt','equipas','atrasos'].forEach(function(tab){
     var btn=document.getElementById('gtab-'+tab);
     if(!btn)return;
@@ -1575,7 +1575,7 @@ function renderGantt(obraId,expandCap){
   var rb=document.getElementById('g-regen');if(rb)rb.addEventListener('click',function(){regenarFases(_ganttObraId);});
   var eb=document.getElementById('g-export');if(eb)eb.addEventListener('click',function(){exportPlanPDF(_ganttObraId);});
 
-  // Atrasos inputs via addEventListener (oninput inline não funciona em HTML gerado por JS)
+  // Atrasos inputs via addEventListener (oninput inline n o funciona em HTML gerado por JS)
   el.querySelectorAll('.atr-dev-inp').forEach(function(inp){
     inp.addEventListener('input',function(){onAtrasoDesvio(this);});
   });
@@ -1588,8 +1588,8 @@ function renderGantt(obraId,expandCap){
 }
 
 function renderAtrasosHTML(fases,sems,obraId,capKeys,capMap){
-  // Painel de atrasos/antecipações integrado na app
-  // Cada capítulo tem: desvio em semanas e início forçado
+  // Painel de atrasos/antecipa es integrado na app
+  // Cada cap tulo tem: desvio em semanas e in cio for ado
   // Ao alterar, chama ganttFaseUpdate com cascata
 
   var TIPO_LABEL={
@@ -1623,7 +1623,7 @@ function renderAtrasosHTML(fases,sems,obraId,capKeys,capMap){
     var bg_tipo=isSub?'rgba(139,69,19,.1)':'rgba(61,107,82,.1)';
     var startSem=cap.startSem||0;
     var durSems=cap.fases.length?cap.fases.reduce(function(mx,f){return Math.max(mx,(f.startSem||0)+(f.durSems||1));},0)-startSem:1;
-    // primeiro índice de fase deste cap no array global
+    // primeiro ndice de fase deste cap no array global
     var fi0=fases.indexOf(cap.fases[0]);
 
     html+='<div style="padding:14px 16px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)" id="atr-card-'+ci+'">'
@@ -1663,11 +1663,11 @@ function renderAtrasosHTML(fases,sems,obraId,capKeys,capMap){
   return html;
 }
 
-// _atrOriginal: guarda startSem original de cada cap quando a aba atrasos é aberta
+// _atrOriginal: guarda startSem original de cada cap quando a aba atrasos aberta
 var _atrOriginal={};
 
 function atrInit(obraId){
-  // Inicializar valores originais quando a aba atrasos é aberta
+  // Inicializar valores originais quando a aba atrasos aberta
   var orc=orcamentos[obraId];
   var obra=obras.find(function(o){return o.id===obraId;});
   var fases=orc&&orc.fases&&orc.fases.length?orc.fases:(obra&&obra.fases?obra.fases:[]);
@@ -1691,13 +1691,13 @@ function onAtrasoDesvio(inp){
   var fases=orc&&orc.fases&&orc.fases.length?orc.fases:(obra&&obra.fases?obra.fases:[]);
   if(!fases.length)return;
 
-  // Usar capNome directamente — sem depender de índice
+  // Usar capNome directamente sem depender de ndice
   var capFases=fases.filter(function(f){return (f.capNome||f.nome)===capNome;});
   if(!capFases.length)return;
 
   var origStart=orig?orig.startSem:(capFases[0].startSem||0);
 
-  // Definir startSem absoluto = original + desvio (não acumulativo)
+  // Definir startSem absoluto = original + desvio (n o acumulativo)
   var novoStart=Math.max(0,origStart+desvio);
   var delta=novoStart-(capFases[0].startSem||0);
   if(delta!==0){
@@ -1785,8 +1785,8 @@ function renderGanttInner(rows,mHead,BAREA,SW,sems,capKeys,capMap,expandCap,capK
 }
 
 function renderEquipasHTML(fases,sems,obraId,COLORS,capKeys,capMap,startDate){
-  // Tabela de equipas no estilo do ficheiro de referência
-  // Colunas: Fase/Trabalho | Tipo | Equipa | Barras por mês
+  // Tabela de equipas no estilo do ficheiro de refer ncia
+  // Colunas: Fase/Trabalho | Tipo | Equipa | Barras por m s
   var MESES=Math.round(sems/4.33);
   var SW2=Math.max(700,MESES*50)/MESES; // px por mês
 
@@ -1809,10 +1809,10 @@ function renderEquipasHTML(fases,sems,obraId,COLORS,capKeys,capMap,startDate){
     geral:{tipo:'DIRETO',n:2,roles:['Operário×2']}
   };
 
-  // Calcular efetivo total por mês
+  // Calcular efetivo total por m s
   var efectivoMes=[];for(var m=0;m<MESES;m++)efectivoMes.push({direto:0,sub:0});
 
-  // Agrupar fases por capítulo para a tabela
+  // Agrupar fases por cap tulo para a tabela
   var html='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;min-width:'+(240+80+80+MESES*50)+'px">';
   // Header
   html+='<thead><tr style="background:var(--bg3);border-bottom:2px solid var(--border)">';
@@ -1836,7 +1836,7 @@ function renderEquipasHTML(fases,sems,obraId,COLORS,capKeys,capMap,startDate){
     var cor_tipo=tipo_label==='DIRETO'?'#2d6b2e':'#8b4513';
     var bg_tipo=tipo_label==='DIRETO'?'rgba(45,107,46,.1)':'rgba(139,69,19,.1)';
 
-    // Calcular meses activos do capítulo
+    // Calcular meses activos do cap tulo
     var mStart=Math.floor((cap.startSem||0)/4.33);
     var mEnd=Math.min(MESES,Math.ceil(((cap.startSem||0)+(cap.durSems||1))/4.33));
 
@@ -1846,7 +1846,7 @@ function renderEquipasHTML(fases,sems,obraId,COLORS,capKeys,capMap,startDate){
       else efectivoMes[m2].sub+=n_equipa;
     }
 
-    // Linha do capítulo
+    // Linha do cap tulo
     html+='<tr style="border-bottom:1px solid var(--border)">';
     html+='<td style="padding:8px 10px;border-right:1px solid var(--border)">';
     html+='<div style="display:flex;align-items:center;gap:6px">';
@@ -1860,7 +1860,7 @@ function renderEquipasHTML(fases,sems,obraId,COLORS,capKeys,capMap,startDate){
     html+='<div style="font-size:18px;font-weight:700;line-height:1">'+n_equipa+'</div>';
     html+='<div style="font-size:9px;color:var(--muted)">pessoas</div></td>';
 
-    // Células por mês
+    // C lulas por m s
     for(var m3=0;m3<MESES;m3++){
       var ativo=m3>=mStart&&m3<mEnd;
       html+='<td style="padding:4px 3px;border-right:1px solid var(--border);vertical-align:middle;text-align:center">';
@@ -1873,7 +1873,7 @@ function renderEquipasHTML(fases,sems,obraId,COLORS,capKeys,capMap,startDate){
     html+='</tr>';
   });
 
-  // Linha de totais por mês
+  // Linha de totais por m s
   var maxTotal=Math.max(1,...efectivoMes.map(function(m){return m.direto+m.sub;}));
   html+='<tr style="background:var(--bg2);border-top:2px solid var(--border);font-weight:600">';
   html+='<td style="padding:8px 10px;font-size:11px;border-right:1px solid var(--border);text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">Total Efetivo</td>';
@@ -1961,8 +1961,8 @@ function exportPlanPDF(obraId){
     geral:{n:2,crew:[{role:'Operário',n:2}]}
   };
 
-  // Converter fases em actividades no formato do ficheiro de referência
-  // Agrupar por capítulo, cada capítulo = 1 actividade
+  // Converter fases em actividades no formato do ficheiro de refer ncia
+  // Agrupar por cap tulo, cada cap tulo = 1 actividade
   const capKeys=[];const capMap={};
   fases.forEach(function(f){
     const k=f.capNome||f.nome;
@@ -2000,7 +2000,7 @@ function exportPlanPDF(obraId){
     };
   });
 
-  // Calcular efetivo por mês
+  // Calcular efetivo por m s
   const efectivo=[];
   for(var m=0;m<MESES;m++)efectivo.push({direto:0,sub:0});
   acts.forEach(function(a){
@@ -2012,7 +2012,7 @@ function exportPlanPDF(obraId){
   });
   const maxEf=Math.max(1,...efectivo.map(function(e){return e.direto+e.sub;}));
 
-  // Gerar cabeçalho de meses
+  // Gerar cabe alho de meses
   const startDateObj=new Date(dataInicio+'T00:00:00');
   function getMesLabel(i){
     const d=new Date(startDateObj.getFullYear(),startDateObj.getMonth()+i,1);
@@ -2025,10 +2025,10 @@ function exportPlanPDF(obraId){
   const endDate=new Date(startDateObj.getFullYear(),startDateObj.getMonth()+MESES,0);
   const endLabel=endDate.toLocaleDateString('pt-PT',{month:'long',year:'numeric'});
 
-  // ── Gerar HTML do planeamento ─────────────────────────
+  // Gerar HTML do planeamento
   function pct2(v){return (v/MESES*100).toFixed(3)+'%';}
 
-  // Cabeçalho de meses para Gantt
+  // Cabe alho de meses para Gantt
   var mHead='';
   for(var m=0;m<MESES;m++){
     mHead+='<div class="month-cell"><span class="mn">M'+(m+1)+'</span><span>'+MESES_LABELS[m]+'</span></div>';
@@ -2387,7 +2387,7 @@ function renderAlertas(){
     const nAlerta=grupo.alertas.filter(function(a){return a.urgencia==='alerta';}).length;
 
     html+='<div style="margin-bottom:20px">';
-    // Cabeçalho da obra
+    // Cabe alho da obra
     html+='<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px 8px 0 0;border-bottom:none">';
     html+='<span style="font-size:14px;font-weight:700">🏗 '+esc(grupo.nome)+'</span>';
     if(nUrgente)html+='<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(192,57,43,.12);color:#c0392b">⚠️ '+nUrgente+' urgente'+(nUrgente>1?'s':'')+'</span>';
@@ -2430,10 +2430,10 @@ function ganttFaseUpdate(obraId,idx,field,val){
   var fases=orc&&orc.fases&&orc.fases.length?orc.fases:(obra?obra.fases:[]);
   if(!fases[idx])return;
 
-  // Aplicar alteração
+  // Aplicar altera o
   fases[idx][field]=val;
 
-  // Cascata apenas quando muda início ou duração
+  // Cascata apenas quando muda in cio ou dura o
   if(field==='startSem'||field==='durSems'){
     var sems=(orc?orc.semanas:(obra&&obra.duracaoSemanas))||78;
     ganttCascata(fases,sems);
@@ -2474,7 +2474,7 @@ function ganttCascata(fases,sems){
     'revestimentos','pavimentos','pinturas','equipamentos',
     'exteriores','geral'];
 
-  // Índice de fases por capítulo (manter ordem original do array)
+  // ndice de fases por cap tulo (manter ordem original do array)
   var caps={};
   fases.forEach(function(f,i){
     var k=f.capNome||f.nome;
@@ -2482,7 +2482,7 @@ function ganttCascata(fases,sems){
     caps[k].push(i);
   });
 
-  // Função auxiliar: cascata intra-capítulo a partir de uma posição
+  // Fun o auxiliar: cascata intra-cap tulo a partir de uma posi o
   function cascataIntraCap(capKey,fromIdx){
     var idxs=caps[capKey];
     if(!idxs)return;
@@ -2494,10 +2494,10 @@ function ganttCascata(fases,sems){
     }
   }
 
-  // Aplicar cascata intra-capítulo em todos os capítulos
+  // Aplicar cascata intra-cap tulo em todos os cap tulos
   Object.keys(caps).forEach(function(k){cascataIntraCap(k,0);});
 
-  // Calcular fim máximo real por tipo após cascata intra
+  // Calcular fim m ximo real por tipo ap s cascata intra
   function calcTipoEnd(){
     var te={};
     fases.forEach(function(f){
@@ -2509,8 +2509,8 @@ function ganttCascata(fases,sems){
     return te;
   }
 
-  // Propagar cascata entre tipos por ordem topológica
-  // Repetir até convergência (máx 3 passes para evitar loop infinito)
+  // Propagar cascata entre tipos por ordem topol gica
+  // Repetir at converg ncia (m x 3 passes para evitar loop infinito)
   for(var pass=0;pass<3;pass++){
     var tipoEnd=calcTipoEnd();
     var changed=false;
@@ -2528,7 +2528,7 @@ function ganttCascata(fases,sems){
         if((f.tipo||'geral')!==tipo)return;
         if((f.startSem||0)<minStart){
           var delta=minStart-(f.startSem||0);
-          // Deslocar esta fase e todas as seguintes do mesmo capítulo
+          // Deslocar esta fase e todas as seguintes do mesmo cap tulo
           var capKey=f.capNome||f.nome;
           var idxs=caps[capKey]||[fi];
           var pos=idxs.indexOf(fi);
@@ -2539,7 +2539,7 @@ function ganttCascata(fases,sems){
         }
       });
 
-      // Após ajustar este tipo, re-aplicar cascata intra nos caps afectados
+      // Ap s ajustar este tipo, re-aplicar cascata intra nos caps afectados
       fases.forEach(function(f){
         if((f.tipo||'geral')===tipo){
           cascataIntraCap(f.capNome||f.nome,0);
@@ -2561,7 +2561,7 @@ function ganttUpdate(obraId,idx,field,val){ganttFaseUpdate(obraId,idx,field,val)
 function addFase(obraId){var obra=obras.find(function(o){return o.id===obraId;});if(!obra)return;var nome=prompt('Nome da fase:');if(!nome||!nome.trim())return;if(!obra.fases)obra.fases=[];var sems=obra.duracaoSemanas||Math.round((obra.duracaoMeses||18)*4.33);var n=obra.fases.length;obra.fases.push({id:uid(),nome:nome.trim(),capNome:nome.trim(),total:0,pct:0,startSem:Math.round(n/(n+1)*sems),durSems:Math.max(1,Math.round(sems/(n+1))),progresso:0});saveData();renderGantt(obraId);}
 function delFase(obraId,idx){var obra=obras.find(function(o){return o.id===obraId;});if(!obra||!obra.fases)return;obra.fases.splice(idx,1);saveData();renderGantt(obraId);}
 
-// ── TAB DIÁRIO ────────────────────────────────────────────
+// TAB DI RIO
 function renderDiario(obraId){
   const el=$('tab-diario');
   const lista=diarios.filter(function(d){return d.obraId===obraId;}).sort(function(a,b){return b.data.localeCompare(a.data);});
@@ -2582,7 +2582,7 @@ function renderDEntry(d){
     +((_diarFotos[d.id]||[]).length?'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">'+(_diarFotos[d.id]||[]).map(function(src){return '<img src="'+src+'" style="width:52px;height:52px;object-fit:cover;border-radius:5px;border:1px solid var(--border)">';}).join('')+'</div>':((d.fotosCount&&d.fotosCount>0)?'<div style="font-size:11px;color:var(--muted);margin-top:6px">📷 '+d.fotosCount+' foto'+(d.fotosCount!==1?'s':'')+'</div>':''))
     +'</div>';
 }
-// ── PAGAMENTOS ─────────────────────────────────────────────────────────────
+// PAGAMENTOS
 
 var _editPag=null, _editOop=null;
 
@@ -2795,9 +2795,9 @@ function obrasSelectOpts(sel){
   return obras.map(function(o){return '<option value="'+o.id+'"'+(o.id===sel?' selected':'')+'>'+esc(o.nome)+'</option>';}).join('');
 }
 
-// ── END PAGAMENTOS ──────────────────────────────────────────────────────────
+// END PAGAMENTOS
 
-// ── SUBCONTRATAÇÕES ────────────────────────────────────────────────────────
+// SUBCONTRATA ES
 
 var _editSubcontr=null;
 
@@ -2935,7 +2935,7 @@ function delSubcontr(id){
   saveData();renderSubcontr(_oid);
 }
 
-// ── END SUBCONTRATAÇÕES ─────────────────────────────────────────────────────
+// END SUBCONTRATA ES
 
 function exportDiarioPDF(dId){
   var d=diarios.find(function(x){return x.id===dId;});
@@ -3031,7 +3031,7 @@ function exportDiarioPDF(dId){
 }
 
 
-// Fotos do diário (base64 em memória durante a sessão do modal)
+// Fotos do di rio (base64 em mem ria durante a sess o do modal)
 var _dFotosB64=[], _diarFotos={};  // fotos em memória (não persistem no localStorage)
 
 function addFotosDiario(inp){
@@ -3095,7 +3095,7 @@ function saveDiario(){
     data:$('d-data').value,clima:$('d-clima').value,trab:+$('d-trab').value||0,activ,
     obs:$('d-obs').value,nec:$('d-nec').value,proxSemana:$('d-prox').value,
     fotosCount:_dFotosB64.length};
-  // Fotos ficam só em memória — não vão para localStorage (evita QuotaExceededError)
+  // Fotos ficam s em mem ria n o v o para localStorage (evita QuotaExceededError)
   var targetId;
   if(_editDiario){
     targetId=_editDiario;
@@ -3116,17 +3116,17 @@ function delDiario(id){
   saveData();renderDiario(_oid);
 }
 
-// ── TAB MATERIAIS ─────────────────────────────────────────
+// TAB MATERIAIS
 function calcConsumos(desc,qtd,unid){
   if(!desc||!(+qtd>0))return[];
   const d=String(desc).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   const q=+qtd;
-  // Normalizar unidades: m² → m2, m³ → m3
+  // Normalizar unidades: m m2, m m3
   const u=String(unid||'').toLowerCase().trim().replace('\u00b2','2').replace('\u00b3','3').replace('\u00b2','2').replace('\u00b3','3');
   const R=[];
   function add(m,v,un){R.push({desc:m,qtd:Math.round(v*100)/100,unid:un});}
 
-  // ── Serviços sem material físico (excluir) ────────────────
+  // Servi os sem material f sico (excluir)
   const skip=['ensaio','certificac','telas finais','fiscaliz','seguranca','pss',
     'faz parte integr','estaleiro','vedacao','sinalizac','transporte de solo',
     'transporte de terr','carga.*transporte','verificacao do equip',
@@ -3135,10 +3135,10 @@ function calcConsumos(desc,qtd,unid){
 
   const dt=d.trim().replace(/[.\s]+$/,'');
 
-  // ── BETÃO m3 ──────────────────────────────────────────────
+  // BET O m3
   const isEstr=/^(escada|lmg)$/.test(dt)||/^lm/.test(dt)||/^p[0-9a-g]$/.test(dt);
   if(u==='m3'){
-    // Escavação nunca gera betão
+    // Escava o nunca gera bet o
     if(/escavacao|escavar/.test(d)){
       return R;
     }
@@ -3146,7 +3146,7 @@ function calcConsumos(desc,qtd,unid){
       const isLimpeza=/c12|c16|limpeza|magr/.test(d);
       add('Betão pronto '+(isLimpeza?'C12/15':'C30/37'),q*1.05,'m³');return R;
     }
-    // Escavação/aterro redes — areia de proteção
+    // Escava o/aterro redes areia de prote o
     if(/escavacao|camada.*protec|areia.*limpa/.test(d)){
       add('Areia lavada (m³)',q*1.05,'m³');return R;
     }
@@ -3154,43 +3154,43 @@ function calcConsumos(desc,qtd,unid){
       add('Aterro compactado (m³)',q*1.0,'m³');return R;
     }
     if(/agua.*residua|residuais/.test(d)){
-      // Escavação para esgotos — já tratada como serviço
+      // Escava o para esgotos j tratada como servi o
       return R;
     }
   }
 
-  // ── COFRAGEM m2 de elementos estruturais ──────────────────
+  // COFRAGEM m2 de elementos estruturais
   if(u==='m2'&&isEstr){
     add('Cofragem (m²)',q*1.05,'m²');
     add('Óleo descofrante (L)',Math.ceil(q*0.15),'L');
     return R;
   }
-  // ── MASSAME m2 ────────────────────────────────────────────
+  // MASSAME m2
   if(u==='m2'&&/massame|pavimento terreo/.test(d)){
     add('Betão C30/37 (m³)',Math.round(q*0.12*1.05*100)/100,'m³');
     add('Rede electrossoldada (m²)',q*1.05,'m²');
     add('Película PE (m²)',q*1.1,'m²');
     return R;
   }
-  // ── GUIA / MURETE ml ─────────────────────────────────────
+  // GUIA / MURETE ml
   if((u==='m'||u==='ml')&&/guia|murete|bloco.*betao/.test(d)){
     add('Bloco betão 50cm (un)',Math.ceil(q*2),'un');
     add('Cimento CEM II (saco 50kg)',Math.ceil(q*0.5),'saco');
     return R;
   }
-  // ── AÇO kg ───────────────────────────────────────────────
+  // A O kg
   if(u==='kg'&&/diametro|varao|aco/.test(d)){
     add('Aço A500NR (kg)',q*1.05,'kg');return R;
   }
 
-  // ═══════════════════════════════════════════════════════
-  // ESPECIALIDADES — Redes de Águas, Esgotos, Eléctrica, Telecom
-  // Estes itens têm descrições técnicas curtas (DN16, Q.G, PEAD Ø40)
-  // Devem aparecer como material a encomendar tal como estão
-  // ═══════════════════════════════════════════════════════
-  // ── Caixa de visita / acesso em betão pré-fabricado ─────
+  // ---
+  // ESPECIALIDADES Redes de guas, Esgotos, El ctrica, Telecom
+  // Estes itens t m descri es t cnicas curtas (DN16, Q.G, PEAD 40)
+  // Devem aparecer como material a encomendar tal como est o
+  // ---
+  // Caixa de visita / acesso em bet o pr -fabricado
   if(u==='un'&&/caixa.*acesso|caixa.*valvula|caixa.*visita|prefabricad.*betao|betao.*prefabricad/.test(d)){
-    // Extrair dimensões se existirem (ex: 400*400*950)
+    // Extrair dimens es se existirem (ex: 400*400*950)
     const dimMatch=d.match(/(\d+)\s*[x*×]\s*(\d+)\s*[x*×]\s*(\d+)/);
     add('Caixa pré-fabricada betão (un)',q,'un');
     add('Betão C12/15 soleira (m³)',Math.round(q*0.4*0.4*0.1*1.05*1000)/1000,'m³');
@@ -3206,9 +3206,9 @@ function calcConsumos(desc,qtd,unid){
     return R;
   }
 
-  // ═══════════════════════════════════════════════════════
-  // CONSTRUÇÃO CIVIL — Paredes, Revestimentos, Acabamentos
-  // ═══════════════════════════════════════════════════════
+  // ---
+  // CONSTRU O CIVIL Paredes, Revestimentos, Acabamentos
+  // ---
   if(u!=='m2'&&u!=='m'&&u!=='ml'&&u!=='un'&&u!=='vg')return R;
 
   const hasTijolo  =/tijolo|alvenar/.test(d);
@@ -3238,10 +3238,10 @@ function calcConsumos(desc,qtd,unid){
   const hasNumero  =/numero de policia|sinaletica/.test(d);
   const hasCeramExt=/cerami.*exterior|omni|calcada|revigres.*exterior/.test(d);
 
-  // Limpeza final / número polícia — serviços
+  // Limpeza final / n mero pol cia servi os
   if(hasLimpeza||hasNumero)return R;
 
-  // ── PAREDE TIJOLO ────────────────────────────────────────
+  // PAREDE TIJOLO
   if(u==='m2'&&hasTijolo){
     const esp=/45\s*cm/.test(d)?45:/37\s*cm/.test(d)?37:/30\s*cm/.test(d)?30:/26\s*cm/.test(d)?26:/22\s*cm/.test(d)?22:11;
     const ups=esp>=40?8:esp>=30?10:esp>=20?14:16;
@@ -3259,7 +3259,7 @@ function calcConsumos(desc,qtd,unid){
     }
     return R;
   }
-  // ── PAREDE GESSO CARTONADO ────────────────────────────────
+  // PAREDE GESSO CARTONADO
   if(u==='m2'&&hasGC&&!hasTijolo){
     const dupla=/21\s*cm|dupla|duplo/.test(d);
     add('Placa GC 12,5mm (m²)',q*(dupla?2.2:1.1),'m²');
@@ -3269,7 +3269,7 @@ function calcConsumos(desc,qtd,unid){
     if(/la mineral|la de vidro|acustic/.test(d))add('Lã mineral (m²)',q*1.05,'m²');
     return R;
   }
-  // ── COBERTURA ZINCO ──────────────────────────────────────
+  // COBERTURA ZINCO
   if(u==='m2'&&hasZinco){
     add('Chapa zinco VMZINC (m²)',q*1.08,'m²');
     if(hasOSB)add('Painel OSB 18mm (m²)',q*1.05,'m²');
@@ -3277,13 +3277,13 @@ function calcConsumos(desc,qtd,unid){
     add('Tela subcobertura (m²)',q*1.05,'m²');
     return R;
   }
-  // ── REVESTIMENTO ACRÍLICO EXT ─────────────────────────────
+  // REVESTIMENTO ACR LICO EXT
   if(u==='m2'&&hasAcrilico){
     add('Revestimento acrílico (saco 25kg)',Math.ceil(q/4),'saco');
     add('Primário fundo (L)',Math.ceil(q*0.15),'L');
     return R;
   }
-  // ── ESTUQUE + PINTURA ────────────────────────────────────
+  // ESTUQUE + PINTURA
   if(u==='m2'&&hasPintura){
     if(/gesso|placa|gc/.test(d)) add('Massa finishing GC (kg)',Math.ceil(q*0.5),'kg');
     else add('Estuque projetado (saco 25kg)',Math.ceil(q*0.6),'saco');
@@ -3291,7 +3291,7 @@ function calcConsumos(desc,qtd,unid){
     add('Primário (lata 5L)',Math.ceil(q/55),'lata');
     return R;
   }
-  // ── TETO FALSO GC ─────────────────────────────────────────
+  // TETO FALSO GC
   if(u==='m2'&&hasTeto){
     add('Placa GC teto 12,5mm (m²)',q*1.08,'m²');
     add('Perfil CD/UD (ml)',Math.ceil(q*3),'ml');
@@ -3300,14 +3300,14 @@ function calcConsumos(desc,qtd,unid){
     add('Tinta plástica mate (lata 15L)',Math.ceil(q/35),'lata');
     return R;
   }
-  // ── AZULEJO / CERÂMICO PAREDE ────────────────────────────
+  // AZULEJO / CER MICO PAREDE
   if(u==='m2'&&hasCeramico){
     add('Azulejo/Cerâmico (m²)',q*1.10,'m²');
     add('Cola C2 (saco 25kg)',Math.ceil(q/5),'saco');
     add('Rejunte (saco 5kg)',Math.ceil(q/15),'saco');
     return R;
   }
-  // ── MOSAICO / CERÂMICO PAV ───────────────────────────────
+  // MOSAICO / CER MICO PAV
   if(u==='m2'&&(hasMosaico||/rev pav 0[3-9]/.test(d))){
     add('Mosaico/Cerâmico pav. (m²)',q*1.10,'m²');
     add('Cola C2 hidrofugada (saco 25kg)',Math.ceil(q/5),'saco');
@@ -3315,7 +3315,7 @@ function calcConsumos(desc,qtd,unid){
     add('Betonilha nivelamento (saco 25kg)',Math.ceil(q*0.8),'saco');
     return R;
   }
-  // ── SOALHO ───────────────────────────────────────────────
+  // SOALHO
   if(u==='m2'&&hasSoalho){
     add('Soalho madeira maciça (m²)',q*1.08,'m²');
     add('Película PE (m²)',q*1.1,'m²');
@@ -3323,65 +3323,65 @@ function calcConsumos(desc,qtd,unid){
     add('Rodapé MDF (ml)',Math.ceil(Math.sqrt(q)*4.5),'ml');
     return R;
   }
-  // ── DECK ─────────────────────────────────────────────────
+  // DECK
   if(u==='m2'&&hasDeck){
     add('Deck madeira termotratada (m²)',q*1.08,'m²');
     add('Estrutura suporte deck (ml)',Math.ceil(q/0.4),'ml');
     add('Parafusos inox (cx 100un)',Math.ceil(q*4/100),'cx');
     return R;
   }
-  // ── BANCADA PEDRA ────────────────────────────────────────
+  // BANCADA PEDRA
   if(u==='m2'&&hasPedra){
     add('Pedra/Quartzite (m²)',q*1.05,'m²');
     add('Silicone (un)',Math.ceil(q*0.5),'un');
     return R;
   }
-  // ── CERÂMICO EXTERIOR (calçada/omni) ─────────────────────
+  // CER MICO EXTERIOR (cal ada/omni)
   if(u==='m2'&&hasCeramExt){
     add('Cerâmico exterior (m²)',q*1.10,'m²');
     add('Cola exterior C2TE (saco 25kg)',Math.ceil(q/5),'saco');
     add('Rejunte exterior (saco 5kg)',Math.ceil(q/15),'saco');
     return R;
   }
-  // ── CALEIRA ml ───────────────────────────────────────────
+  // CALEIRA ml
   if((u==='m'||u==='ml')&&/caleira/.test(d)){
     add('Caleira zinco (ml)',q*1.1,'ml');
     add('Suporte caleira (un)',Math.ceil(q/0.5),'un');
     return R;
   }
-  // ── RODAPÉ ml ────────────────────────────────────────────
+  // RODAP ml
   if((u==='m'||u==='ml')&&hasRodape){
     add('Rodapé MDF lacado (ml)',q*1.05,'ml');
     return R;
   }
-  // ── VÃOS INTERIORES: guardas, soleiras, peitoris (un) ────
+  // V OS INTERIORES: guardas, soleiras, peitoris (un)
   if(u==='un'&&hasGuarda){
     add(desc.trim().substring(0,60)+' (un)',q,'un');return R;
   }
   if(u==='un'&&(hasSoleira||hasPeitoril)){
     add(desc.trim().substring(0,60)+' (un)',q,'un');return R;
   }
-  // ── ESCADA MADEIRA ────────────────────────────────────────
+  // ESCADA MADEIRA
   if(u==='un'&&hasEscada){
     add('Escada madeira carvalho (vg)',1,'vg');return R;
   }
-  // ── EQUIPAMENTOS SANITÁRIOS ───────────────────────────────
+  // EQUIPAMENTOS SANIT RIOS
   if((u==='un'||u==='vg')&&hasEqSanit){
     add(desc.trim().substring(0,70).replace(/\n/g,' '),q,'un');return R;
   }
-  // ── MÓVEIS / ARMÁRIOS / COZINHA ───────────────────────────
+  // M VEIS / ARM RIOS / COZINHA
   if((u==='un'||u==='vg')&&hasMovel){
     add(desc.trim().substring(0,70).replace(/\n/g,' '),q,'un');return R;
   }
-  // ── CERÂMICO EXTERIOR vg ─────────────────────────────────
+  // CER MICO EXTERIOR vg
   if(u==='vg'&&/omni|calcada|ceramico.*ext/.test(d)){
     add('Cerâmico exterior REVIGRÉS OMNI (vg)',1,'vg');return R;
   }
   return R;
 }
 function renderMats(obraId,expandCat,expandItem){
-  // navegação: path = array de índices [secIdx, capIdx, subIdx, artIdx]
-  // guardamos o path de navegação em _matPath
+  // navega o: path = array de ndices [secIdx, capIdx, subIdx, artIdx]
+  // guardamos o path de navega o em _matPath
   _matObraId=obraId;
   if(expandCat===undefined){_matPath=[];}
   else if(typeof expandCat==='string'){_matPath=JSON.parse(expandCat);}
@@ -3390,7 +3390,7 @@ function renderMats(obraId,expandCat,expandItem){
   const el=$('tab-materiais');
   const orc=orcamentos[obraId];
   if(!orc||!orc._secoes||!orc._secoes.length){
-    // fallback para orçamentos sem _secoes
+    // fallback para or amentos sem _secoes
     el.innerHTML='<div class="empty"><div class="empty-icon">📦</div><h3>Sem orçamento hierárquico</h3><p>Reimporta o orçamento para activar esta vista.</p></div>';
     return;
   }
@@ -3399,17 +3399,17 @@ function renderMats(obraId,expandCat,expandItem){
   const stL={por_encomendar:'Por Encomendar',encomendado:'Encomendado',entregue:'Entregue',utilizado:'Utilizado',subcontratado:'Subcontratado'};
   const stC={por_encomendar:'var(--amber)',encomendado:'var(--accent)',entregue:'var(--green)',utilizado:'var(--muted)',subcontratado:'#8b5cf6'};
 
-  // Função recursiva: dado um nó (sec/cap/sub/art), recolhe todos os itens-folha com materiais
+  // Fun o recursiva: dado um n (sec/cap/sub/art), recolhe todos os itens-folha com materiais
   function coletarItens(no,ctxDesc){
     var itens=[];
     function visitar(n,ctx){
       if(!n)return;
-      // contexto acumulado deste nó (nome/desc do próprio)
+      // contexto acumulado deste n (nome/desc do pr prio)
       var myCtx=(ctx||'')+' '+(n.nome||n.desc||'');
       // itens directos com materiais
       (n.itens||[]).forEach(function(it){
         if(it.isSub)return;
-        // descrição enriquecida com contexto do pai para melhor detecção
+        // descri o enriquecida com contexto do pai para melhor detec o
         var descCtx=(myCtx+' '+it.desc).trim();
         var mats=calcConsumos(descCtx,it.qtd,it.unid||'');
         if(mats.length)itens.push({desc:it.desc,qtd:it.qtd,unid:it.unid,num:it.num||'',mats:mats,_srcNode:n});
@@ -3422,13 +3422,13 @@ function renderMats(obraId,expandCat,expandItem){
     return itens;
   }
 
-  // Obter nó actual pela path
+  // Obter n actual pela path
   function noByPath(path){
     var secoes=orc._secoes;
     if(!path||!path.length)return null;
     var sec=secoes[path[0]];if(!sec)return null;
     if(path.length===1)return sec;
-    // nível 2: cap ou subcap directo da sec
+    // n vel 2: cap ou subcap directo da sec
     var caps=sec.capitulos||[];
     var subs=sec.subcaps||[];
     var all2=[...caps,...subs];
@@ -3452,11 +3452,11 @@ function renderMats(obraId,expandCat,expandItem){
 
   var html='<div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap">';
   var _leafItens=[]; // itens do no folha actual, para o botao PDF
-  // botão Criar Encomenda sempre visível
+  // bot o Criar Encomenda sempre vis vel
   html+='<button class="btn btn-primary btn-sm" onclick="criarEncMats(\''+obraId+'\')" style="margin-left:auto">🛒 Criar Encomenda</button>';
   html+='</div>';
 
-  // Bread-crumb de navegação
+  // Bread-crumb de navega o
   if(path.length>0){
     html+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)">';
     html+='<span onclick="renderMats(\''+obraId+'\')" style="cursor:pointer;color:var(--accent)">Materiais</span>';
@@ -3481,7 +3481,7 @@ function renderMats(obraId,expandCat,expandItem){
 
   // Determinar o que mostrar
   if(path.length===0){
-    // NÍVEL RAIZ: listar secções
+    // N VEL RAIZ: listar sec es
     html+='<div style="display:flex;flex-direction:column;gap:6px">';
     secoes.forEach(function(sec,si){
       var nMats=contarMats(sec);
@@ -3495,23 +3495,23 @@ function renderMats(obraId,expandCat,expandItem){
     html+='</div>';
 
   } else {
-    // Nó actual
+    // N actual
     var curNode=noByPath(path);
     if(!curNode){el.innerHTML='<div class="empty">Nó não encontrado</div>';return;}
 
-    // Ver se tem filhos navegáveis (capitulos, subcaps, artigos)
+    // Ver se tem filhos naveg veis (capitulos, subcaps, artigos)
     var filhos=[];
     var tipoFilho='';
     if((curNode.capitulos||[]).length){filhos=curNode.capitulos;tipoFilho='cap';}
     else if((curNode.subcaps||[]).length){filhos=curNode.subcaps;tipoFilho='sub';}
     else if((curNode.artigos||[]).length){filhos=curNode.artigos;tipoFilho='art';}
 
-    // Verificar se os "filhos" têm sub-filhos (para decidir se mostrar lista ou itens)
+    // Verificar se os "filhos" t m sub-filhos (para decidir se mostrar lista ou itens)
     var filhosTêmFilhos=filhos.some(function(f){
       return (f.capitulos||[]).length||(f.subcaps||[]).length||(f.artigos||[]).length;
     });
 
-    // Se tem filhos navegáveis → mostrar lista de filhos
+    // Se tem filhos naveg veis mostrar lista de filhos
     if(filhos.length&&filhosTêmFilhos){
       html+='<div style="font-size:14px;font-weight:700;margin-bottom:10px">'+(curNode.num?curNode.num+' ':'')+esc(curNode.nome||curNode.desc||'')+'</div>';
       html+='<div style="display:flex;flex-direction:column;gap:5px">';
@@ -3527,7 +3527,7 @@ function renderMats(obraId,expandCat,expandItem){
       html+='</div>';
 
     } else if(filhos.length&&!filhosTêmFilhos){
-      // Filhos são artigos-folha: mostrar lista de artigos com os seus materiais
+      // Filhos s o artigos-folha: mostrar lista de artigos com os seus materiais
       html+='<div style="font-size:14px;font-weight:700;margin-bottom:10px">'+(curNode.num?curNode.num+' ':'')+esc(curNode.nome||curNode.desc||'')+'</div>';
       html+='<div style="display:flex;flex-direction:column;gap:5px">';
       filhos.forEach(function(filho,fi){
@@ -3543,7 +3543,7 @@ function renderMats(obraId,expandCat,expandItem){
       html+='</div>';
 
     } else {
-      // Nó folha — mostrar os itens e os seus materiais
+      // N folha mostrar os itens e os seus materiais
       var todosItens=coletarItens(curNode);
       _leafItens=todosItens; // guardar para o listener do botao PDF
       html+='<div style="font-size:13px;font-weight:700;margin-bottom:12px">'+(curNode.num?curNode.num+' ':'')+esc((curNode.nome||curNode.desc||'').replace(/\n/g,' ').trim())+'</div>';
@@ -3627,11 +3627,11 @@ function gerarEncPDF(obraId,catNome,itemDesc,selMats){
   var hoje=new Date().toLocaleDateString('pt-PT');
   var ano=new Date().getFullYear();
 
-  // Número da encomenda: recalcular com base nas encomendas existentes desta obra
+  // N mero da encomenda: recalcular com base nas encomendas existentes desta obra
   var encsDaObra=encomendas.filter(function(x){return x.obraId===obraId;});
   var nEnc=encsDaObra.length+1;
 
-  // Código da obra: sanitizar nome para usar no número
+  // C digo da obra: sanitizar nome para usar no n mero
   var codObra=nomeObra.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_\-]/g,'').substring(0,20);
   var numEnc='Encomenda N\u00ba'+String(nEnc).padStart(3,'0')+'/'+codObra+'_'+ano;
 
@@ -3749,7 +3749,7 @@ function criarEncMats(obraId){
   _oid=obraId;novaEnc(itens);
 }
 
-// ── TAB ENCOMENDAS ────────────────────────────────────────
+// TAB ENCOMENDAS
 function renderEncs(obraId){
   const el=$('tab-encomendas');
   const lista=encomendas.filter(function(e){return e.obraId===obraId;}).sort(function(a,b){return (b.data||'').localeCompare(a.data||'');});
@@ -3822,7 +3822,7 @@ function gerarEncPDFLista(id){
   });
   var sL={rascunho:'Rascunho',enviada:'Enviada',confirmada:'Confirmada',entregue:'Entregue'};
   var html='<!DOCTYPE html><html lang="pt"><head><meta charset="UTF-8">'    +'<title>'+numEnc+'</title>'    +'<style>'    +'@page{size:A4;margin:14mm 12mm}'    +'*{box-sizing:border-box;margin:0;padding:0}'    +'body{font-family:Arial,sans-serif;font-size:12px;color:#1a1a1a;background:#fff}'    +'.header{border-bottom:3px solid #1d4a1e;padding-bottom:12px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}'    +'.enc-num{font-size:15px;font-weight:700;color:#1d4a1e;text-align:right}'    +'.enc-date{font-size:10px;color:#888;text-align:right;margin-top:3px}'    +'.meta-bar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}'    +'.meta-card{background:#f4f7f4;border:1px solid #dce8dc;border-radius:6px;padding:10px 14px}'    +'.meta-label{font-size:9px;font-weight:700;color:#5a7a5a;text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px}'    +'.meta-value{font-size:12px;font-weight:600;color:#1a1a1a;line-height:1.4}'    +'table{width:100%;border-collapse:collapse;font-size:11px}'    +'thead tr{background:#1d4a1e;color:#fff}'    +'thead th{padding:8px 10px;text-align:left;font-weight:600;letter-spacing:.3px}'    +'tbody tr{border-bottom:1px solid #eee}'    +'tbody tr:nth-child(even){background:#f9fbf9}'    +'tbody td{padding:7px 10px}'    +'.sig-box{margin-top:36px;display:grid;grid-template-columns:1fr 1fr;gap:40px}'    +'.sig-line{border-top:1px solid #bbb;padding-top:5px;font-size:10px;color:#888;text-align:center}'    +'.footer{margin-top:20px;padding-top:10px;border-top:1px solid #ddd;display:flex;justify-content:space-between;font-size:9px;color:#aaa}'    +'@media print{body{padding:0}}'    +'
-/* ── MOBILE RESPONSIVE ──────────────────────────────────── */
+/* -- MOBILE RESPONSIVE ----------------------------------------- */
 @media (max-width: 768px) {
   .sidebar { display: none !important; }
   .sidebar.open {
@@ -3877,7 +3877,7 @@ function gerarEncPDFLista(id){
   .more-drawer { display: none !important; }
 }
 
-/* ── BOTTOM NAV ─────────────────────────────────────────── */
+/* -- BOTTOM NAV ------------------------------------------------ */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -3889,10 +3889,7 @@ function gerarEncPDFLista(id){
   padding-bottom: env(safe-area-inset-bottom, 0);
   box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
 }
-.bottom-nav-items {
-  display: flex;
-  align-items: stretch;
-}
+.bottom-nav-items { display: flex; align-items: stretch; }
 .bottom-nav-btn {
   flex: 1;
   display: flex;
@@ -3915,7 +3912,7 @@ function gerarEncPDFLista(id){
 .bottom-nav-btn:hover { color: var(--text); }
 .bn-icon { font-size: 20px; line-height: 1; }
 
-/* ── MORE DRAWER ────────────────────────────────────────── */
+/* -- MORE DRAWER ----------------------------------------------- */
 .more-drawer {
   display: none;
   position: fixed;
@@ -3947,7 +3944,7 @@ function gerarEncPDFLista(id){
 .more-drawer-btn:hover { background: var(--surface2); }
 .md-icon { font-size: 20px; width: 24px; text-align: center; }
 
-/* ── TOAST ──────────────────────────────────────────────── */
+/* -- TOAST ----------------------------------------------------- */
 .toast-container {
   position: fixed;
   bottom: 80px;
@@ -3987,7 +3984,7 @@ function delEnc(id){
   saveData();renderEncs(_oid);
 }
 
-// ── EQUIPA ────────────────────────────────────────────────
+// EQUIPA
 function renderEquipa(){
   const tb=$('equipa-tb');
   if(!trabalhadores.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Sem trabalhadores.</td></tr>';return;}
@@ -4028,7 +4025,7 @@ function delTrab(id){
   saveData();renderEquipa();
 }
 
-// ── FOLHA DE PONTO ────────────────────────────────────────
+// FOLHA DE PONTO
 function setupPonto(){
   const oSel=$('ponto-obra');
   oSel.innerHTML='<option value="">Seleccionar obra</option>';
@@ -4067,7 +4064,7 @@ function savePonto(obraId,sem,trabId,diaIdx,val){
   saveData();
 }
 
-// ── CONFIG ────────────────────────────────────────────────
+// CONFIG
 function exportData(){
   const dados=JSON.stringify({obras,trabalhadores,pontosHora,orcamentos,diarios,encomendas},null,2);
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([dados],{type:'application/json'}));
@@ -4086,7 +4083,7 @@ function importData(input){
   };r.readAsText(f);
 }
 
-// ── INIT ──────────────────────────────────────────────────
+// INIT
 
 // Restaurar dados guardados
 (function(){
@@ -4107,37 +4104,37 @@ renderDash();
 <nav class="bottom-nav" id="bottom-nav">
   <div class="bottom-nav-items">
     <button class="bottom-nav-btn active" data-page="dashboard" onclick="mobileNav('dashboard')">
-      <span class="bn-icon">&#x2B21;</span>Dashboard
+      <span class="bn-icon">&#9651;</span>Dashboard
     </button>
     <button class="bottom-nav-btn" data-page="obras" onclick="mobileNav('obras')">
-      <span class="bn-icon">&#x1F3D7;</span>Obras
+      <span class="bn-icon">&#127959;</span>Obras
     </button>
     <button class="bottom-nav-btn" data-page="equipa" onclick="mobileNav('equipa')">
-      <span class="bn-icon">&#x1F477;</span>Equipa
+      <span class="bn-icon">&#128119;</span>Equipa
     </button>
     <button class="bottom-nav-btn" data-page="pagamentos" onclick="mobileNav('pagamentos')">
-      <span class="bn-icon">&#x1F4B3;</span>Financeiro
+      <span class="bn-icon">&#128179;</span>Financeiro
     </button>
     <button class="bottom-nav-btn" onclick="toggleMoreDrawer()">
-      <span class="bn-icon">&#x22EF;</span>Mais
+      <span class="bn-icon">&#8943;</span>Mais
     </button>
   </div>
 </nav>
 
 <div class="more-drawer" id="more-drawer">
   <button class="more-drawer-btn" onclick="mobileNav('ponto');toggleMoreDrawer()">
-    <span class="md-icon">&#x1F550;</span>Folha de Ponto
+    <span class="md-icon">&#128336;</span>Folha de Ponto
   </button>
   <button class="more-drawer-btn" onclick="mobileNav('alertas');toggleMoreDrawer()">
-    <span class="md-icon">&#x1F514;</span>Alertas
+    <span class="md-icon">&#128276;</span>Alertas
   </button>
   <button class="more-drawer-btn" onclick="mobileNav('config');toggleMoreDrawer()">
-    <span class="md-icon">&#x2699;</span>Configuracoes
+    <span class="md-icon">&#9881;</span>Configuracoes
   </button>
 </div>
 
 <script>
-// ── MOBILE NAVIGATION ────────────────────────────────────
+// Mobile navigation
 function openSidebar() {
   var s = document.querySelector('.sidebar');
   var o = document.getElementById('sidebar-overlay');
@@ -4171,8 +4168,7 @@ document.addEventListener('click', function(e) {
     }
   }
 });
-
-// ── HAMBURGER BUTTON ─────────────────────────────────────
+// Hamburger button
 document.querySelectorAll('.topbar').forEach(function(topbar) {
   var btn = document.createElement('button');
   btn.className = 'hamburger-btn';
